@@ -1,0 +1,27 @@
+@startuml RequestLoanSequence
+title Sequence: Request Loan (synchronous, no events)
+
+actor MemberActor as "Member (client)"
+participant Controller as "LoanController (API)"
+participant AppService as "LoanApplicationService"
+participant RepoPort as "ILoanRepository (port)"
+participant RepoImpl as "LoanRepositoryImpl (adapter)"
+database DB as "LoanEntity (DB)"
+
+MemberActor -> Controller : POST /loans { memberId, copyId }
+Controller -> AppService : requestLoan(memberId, copyId)
+AppService -> RepoPort : findActiveByMemberId(memberId)
+RepoPort -> RepoImpl : call implementation
+RepoImpl -> DB : SELECT ... (JPA)
+DB --> RepoImpl : result (LoanEntity[])
+RepoImpl --> RepoPort : map to domain Loan[]
+AppService -> AppService : domain validations
+AppService -> RepoPort : save(new Loan)
+RepoPort -> RepoImpl : save() -> DB
+RepoImpl -> DB : INSERT/UPDATE
+DB --> RepoImpl : persisted
+RepoImpl --> RepoPort : return Loan
+AppService --> Controller : LoanDto (201 Created)
+Controller --> MemberActor : HTTP 201 Created
+
+@enduml

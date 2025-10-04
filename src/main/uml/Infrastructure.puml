@@ -1,0 +1,35 @@
+@startuml InfrastructureLayer
+title Infrastructure - Repository Adapters (JPA)
+
+package "infrastructure.persistence" {
+  class LoanEntity {
+    - Long id
+    - String loanId
+    - String bookCopyId
+    - String memberId
+    - Date requestDate
+    - Date dueDate
+    - Date returnDate
+    - String status
+    - Integer extensionCount
+  }
+
+  interface LoanJpaRepository {
+    + Optional<LoanEntity> findByLoanId(String)
+    + List<LoanEntity> findByMemberId(String)
+  }
+
+  class LoanRepositoryImpl {
+    - LoanJpaRepository jpaRepo
+    - LoanMapper mapper
+    + save(loan: Loan): Loan
+    + findById(id: LoanId): Optional<Loan>
+    + findByMemberId(memberId: MemberId): List<Loan>
+  }
+
+  LoanRepositoryImpl ..|> ILoanRepository
+  LoanRepositoryImpl --> LoanJpaRepository
+  LoanRepositoryImpl --> LoanEntity
+}
+
+@enduml

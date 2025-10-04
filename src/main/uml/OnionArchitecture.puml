@@ -1,0 +1,40 @@
+@startuml OnionArchitectureOverview
+title Lending Context - Onion Architecture Overview
+
+package "Presentation (API/UI)" {
+  class LoanController
+  class MemberController
+}
+
+package "Application (Use Cases)" {
+  class LoanApplicationService
+  class MemberApplicationService
+}
+
+package "Domain (Core)" {
+  class LoanAggregate
+  class MemberAggregate
+  class BookAggregate
+  class DomainServices
+  class ValueObjects
+  interface ILoanRepository
+  interface IMemberRepository
+  interface IBookRepository
+}
+
+package "Infrastructure (Adapters)" {
+  class LoanRepositoryImpl
+  class MemberRepositoryImpl
+  class BookRepositoryImpl
+  class PersistenceEntitiesJPA
+}
+
+LoanController --> LoanApplicationService
+MemberController --> MemberApplicationService
+LoanApplicationService --> LoanAggregate
+MemberApplicationService --> MemberAggregate
+LoanRepositoryImpl ..|> ILoanRepository
+MemberRepositoryImpl ..|> IMemberRepository
+BookRepositoryImpl ..|> IBookRepository
+
+@enduml

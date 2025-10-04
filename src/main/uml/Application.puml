@@ -1,0 +1,35 @@
+@startuml ApplicationLayer
+title Application Layer - Services & DTOs
+
+package "application" {
+  class LoanApplicationService {
+    - ILoanRepository loanRepo
+    - IMemberRepository memberRepo
+    - IBookRepository bookRepo
+    --
+    + requestLoan(memberId: String, copyId: String): LoanDto
+    + approveLoan(loanId: String, staffId: String): void
+    + returnLoan(loanId: String, returnDate: Date): void
+    + extendLoan(loanId: String, days: int): void
+  }
+
+  class LoanDto {
+    + String loanId
+    + String bookId
+    + String memberId
+    + String status
+    + Date dueDate
+  }
+
+  class CreateLoanRequest {
+    + String memberId
+    + String copyId
+  }
+
+  LoanApplicationService --> ILoanRepository
+  LoanApplicationService --> IMemberRepository
+  LoanApplicationService --> IBookRepository
+  LoanApplicationService --> LoanDto
+}
+
+@enduml

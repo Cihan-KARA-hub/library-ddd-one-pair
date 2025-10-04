@@ -1,0 +1,75 @@
+@startuml DomainModelFixed
+title Domain Model - Aggregates & Value Objects
+
+package "domain.lending" {
+  class Loan {
+    - LoanId id
+    - BookId bookId
+    - MemberId memberId
+    - LocalDate requestDate
+    - LocalDate dueDate
+    - LocalDate returnDate
+    - LoanStatus status
+    - int extensionCount
+    --
+    + <<static>> request(bookId: BookId, memberId: MemberId): Loan
+    + approve(staffId: StaffId): void
+    + returnBook(returnDate: LocalDate): void
+    + extend(days: int): void
+    + isOverdue(currentDate: LocalDate): boolean
+  }
+
+  class LoanId {
+    - String value
+  }
+  class BookId {
+    - String value
+  }
+  class MemberId {
+    - String value
+  }
+  class StaffId {
+    - String value
+  }
+
+  class LoanStatus <<enumeration>> {
+    REQUESTED
+    APPROVED
+    ACTIVE
+    RETURNED
+    OVERDUE
+  }
+
+  Loan *-- LoanId
+  Loan *-- BookId
+  Loan *-- MemberId
+}
+
+package "domain.catalog" {
+  class BookInfo {
+    + String isbn
+    + String title
+    + int copyCount
+  }
+  class BookCopy {
+    + String copyId
+    + boolean available
+  }
+  BookInfo o-- BookCopy : contains
+}
+
+package "domain.member" {
+  class Member {
+    - MemberId id
+    - String firstName
+    - String lastName
+    - String email
+    - boolean active
+    --
+    + deactivate(): void
+    + activate(): void
+  }
+  Member *-- MemberId
+}
+
+@enduml
